@@ -1,6 +1,7 @@
 import React from "react";
 import "./ReviewList.css";
 import { IAll } from "../../models/Interfaces";
+import { StarRating } from "../Star/StarRating";
 const URL = "http://localhost:9000/api/products";
 
 interface PRO {
@@ -27,7 +28,7 @@ export const ReviewList = ({ productId }: PRO) => {
                 <main key={rev.id} className="rev">
                     <section>
                         <aside className="rev__author">{rev.author}</aside>
-                        <aside>Rating: {rev.rating}/5</aside>
+                        <aside>Rating: <StarRating value={rev.rating} /></aside>
                         <p>{rev.content}</p>
                     </section>
                 </main>

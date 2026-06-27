@@ -2,11 +2,6 @@
     padding: 12px;
 }
 
-.rev section {
-    display: flex;
-    flex-direction: column;
-}
-
 .rev__author {
     font: bold;
 }
