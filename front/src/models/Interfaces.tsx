@@ -8,13 +8,17 @@ export interface IRev {
     product_id: number
 };
 
-export interface IAll {
-    summary: string,
-    reviews: IRev[]
+export interface ISum {
+    id: number,
+    product_id: number,
+    content: string,
+    generated_at: string,
+    expires_at: string
 };
 
-export interface ISum {
-    summary: string
+export interface IAll {
+    summary: ISum | null,
+    reviews: IRev[]
 };
 
 

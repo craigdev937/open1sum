@@ -6,5 +6,9 @@
     font: bold;
 }
 
+.error {
+    color: var(--red);
+}
+
 
 
