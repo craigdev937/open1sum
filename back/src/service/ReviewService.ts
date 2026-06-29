@@ -1,4 +1,4 @@
-import { client } from "../middleware/OpenAI.ts";
+import { HF } from "../middleware/OpenAI.ts";
 import { dBase } from "../data/Database.ts";
 import { IRev, ISum } from "../models/Interfaces.ts";
 
@@ -12,7 +12,7 @@ class RevServiceClass {
             [productId, limit]
         );
         return reviews.rows;
-    }
+    };
 
     async sumRev(productId: number): Promise<ISum> {
         const existing = await dBase.query<ISum>(
@@ -24,18 +24,9 @@ class RevServiceClass {
             return existing.rows[0];
         }
 
-        const reviews = await this.getReviews(productId, 10);
-        const joinRev = reviews.map((r) => r.content).join("\n\n");
-        const prompt = `Summarize the following customer
-            reviews into a short paragraph highlighting
-            key themes, both positive and negative:
-            ${joinRev}`;
-        const response = await client.responses.create({
-            model: "gpt-5.4-nano-2026-03-17",
-            input: prompt,
-            temperature: 0.2,
-            max_output_tokens: 300
-        });
+        const reviews = await REV.getReviews(productId, 10);
+        const joinRev = reviews.map((r) => r.content).join("\n\n");            
+        const summary = await REV.summarize(joinRev);
 
         const result = await dBase.query<ISum>(
             `INSERT INTO summaries
@@ -46,10 +37,19 @@ class RevServiceClass {
                 generated_at=NOW(),
                 expires_at=EXCLUDED.expires_at
             RETURNING *`,
-            [productId, response.output_text]
+            [productId, summary]
         );
         return result.rows[0];
-    }
+    };
+
+    async summarize(text: string) {
+        const output = await HF.summarization({
+            model: "facebook/bart-large-cnn",
+            inputs: text,
+            provider: "hf-inference",
+        });
+        return output.summary_text;
+    };
 }
 
 export const REV: RevServiceClass = new RevServiceClass();

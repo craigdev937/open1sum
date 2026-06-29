@@ -5,7 +5,7 @@ import { ReviewList } from "../components/List/ReviewList";
 export const App = () => {
     return (
         <React.Fragment>
-            <ReviewList productId={1} />
+            <ReviewList productId={3} />
         </React.Fragment>
     );
 };
