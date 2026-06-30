@@ -1,0 +1,4 @@
+export const myPrompt = "Summarize the following customer reviews into a short paragraph highlighting key themes, both positive and negative.";
+
+
+

@@ -6,7 +6,7 @@ class RevClass {
     Rev = async (PID: number): Promise<IAll> => {
         const res = await fetch(`${URL}/${PID}/reviews`);
         if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
+        const data: IAll = await res.json();
         console.log(data);
         return data;
     };
@@ -14,7 +14,7 @@ class RevClass {
     Sum = async (PID: number): Promise<ISum> => {
         const res = await fetch(`${URL}/${PID}/${SUM}`);
         if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
+        const data: ISum = await res.json();
         console.log(data);
         return data;
     };

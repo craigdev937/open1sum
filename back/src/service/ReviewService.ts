@@ -1,9 +1,13 @@
 import { HF } from "../middleware/OpenAI.ts";
 import { dBase } from "../data/Database.ts";
 import { IRev, ISum } from "../models/Interfaces.ts";
+import { myPrompt } from "../prompts/sum-rev.ts";
 
 class RevServiceClass {
-    async getReviews(productId: number, limit = 10): Promise<IRev[]> {
+    async getReviews(
+        productId: number, 
+        limit = 10
+    ): Promise<IRev[]> {
         const reviews = await dBase.query<IRev>(
             `SELECT * FROM reviews
             WHERE product_id=$1
@@ -26,7 +30,7 @@ class RevServiceClass {
 
         const reviews = await REV.getReviews(productId, 10);
         const joinRev = reviews.map((r) => r.content).join("\n\n");            
-        const summary = await REV.summarize(joinRev);
+        const summary = await REV.sumReviews(joinRev);
 
         const result = await dBase.query<ISum>(
             `INSERT INTO summaries
@@ -42,13 +46,21 @@ class RevServiceClass {
         return result.rows[0];
     };
 
-    async summarize(text: string) {
-        const output = await HF.summarization({
-            model: "facebook/bart-large-cnn",
-            inputs: text,
-            provider: "hf-inference",
+    async sumReviews(reviews: string) {
+        const chatCompletion = await HF.chatCompletion({
+        model: "meta-llama/Llama-3.1-8B-Instruct:fastest",
+        messages: [
+                {
+                    role: "system",
+                    content: myPrompt,
+                },
+                {
+                    role: "user",
+                    content: reviews,
+                },
+            ],
         });
-        return output.summary_text;
+        return chatCompletion.choices[0].message.content || "";
     };
 }
 
