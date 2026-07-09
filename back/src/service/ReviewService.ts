@@ -2,6 +2,7 @@ import { HF } from "../middleware/OpenAI.ts";
 import { dBase } from "../data/Database.ts";
 import { IRev, ISum } from "../models/Interfaces.ts";
 import { myPrompt } from "../prompts/sum-rev.ts";
+import { OllamaClient } from "../middleware/OpenAI.ts";
 
 class RevServiceClass {
     async getReviews(
@@ -47,8 +48,8 @@ class RevServiceClass {
     };
 
     async sumReviews(reviews: string) {
-        const chatCompletion = await HF.chatCompletion({
-        model: "meta-llama/Llama-3.1-8B-Instruct:fastest",
+        const response = await OllamaClient.chat({
+        model: "tinyllama",
         messages: [
                 {
                     role: "system",
@@ -60,7 +61,7 @@ class RevServiceClass {
                 },
             ],
         });
-        return chatCompletion.choices[0].message.content || "";
+        return response.message.content;
     };
 }
 

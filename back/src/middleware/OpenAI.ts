@@ -1,3 +1,4 @@
+import { Ollama } from "ollama";
 import OpenAI from "openai";
 import { InferenceClient } from "@huggingface/inference";
 
@@ -6,5 +7,7 @@ export const OC = new OpenAI({
 });
 
 export const HF = new InferenceClient(process.env.HF_TOKEN);
+export const OllamaClient = new Ollama();
+
 
 
